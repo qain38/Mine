@@ -1,0 +1,372 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PF_Project
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            bool exitProgram = false;
+
+            while (!exitProgram)
+            {
+                Console.WriteLine("Menu:");
+                Console.WriteLine("1. Word frequency Analysis");
+                Console.WriteLine("2. Sentence Maker");
+                Console.WriteLine("3. Longest and Shortest Word Finder");
+                Console.WriteLine("4. Word Search");
+                Console.WriteLine("5. Palindrome Detector");
+                Console.WriteLine("6. Vowel/Consonant Counter");
+                Console.WriteLine("7. Exit");
+
+                Console.Write("Enter your choice (1-7): ");
+                string choice = Console.ReadLine();
+
+                Console.WriteLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        SplitSentenceAndCountFrequency();
+                        break;
+                    case "2":
+                        GenerateRandomSentences();
+                        break;
+                    case "3":
+                        FindShortestAndLongestWords();
+                        break;
+                    case "4":
+                        Count_Occurrences();
+                        break;
+                    case "5":
+                        FindPalindromicWords();
+                        break;
+                    case "6":
+                        CountVowelsAndConsonants();
+                        break;
+                    case "7":
+                        exitProgram = true;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice. Please enter a number from 1 to 7.");
+                        break;
+                }
+
+                Console.WriteLine();
+            }
+        }
+        static void SplitSentenceAndCountFrequency()
+        {
+            Console.WriteLine("Please enter a sentence:");
+            string sentence = Console.ReadLine();
+
+            // Split the sentence into words
+            string[] words = SplitSentenceIntoWords(sentence);
+
+            Console.WriteLine("Words in the sentence:");
+            foreach (string word in words)
+            {
+                Console.WriteLine(word);
+            }
+
+            Console.WriteLine();
+
+            // Count word frequency
+           
+            CountWordFrequency(sentence);
+        }
+        
+
+        static void FindShortestAndLongestWords()
+        {
+            Console.WriteLine("Enter a sentence:");
+            string sentence = Console.ReadLine();
+
+            string[] words = sentence.Split(' ');
+
+            string shortestWord = GetShortestWord(words);
+            string longestWord = GetLongestWord(words);
+
+            Console.WriteLine($"Shortest word(s): {shortestWord}");
+            Console.WriteLine($"Longest word(s): {longestWord}");
+        }
+
+        static void Count_Occurrences()
+        {
+            Console.WriteLine("Enter a sentence:");
+            string sentence = Console.ReadLine();
+
+            Console.WriteLine("Enter a word to search:");
+            string searchWord = Console.ReadLine();
+
+            int count = CountOccurrences(sentence, searchWord);
+
+            if (count > 0)
+            {
+                Console.WriteLine($"The word '{searchWord}' appears {count} time(s) in the sentence.");
+            }
+            else
+            {
+                Console.WriteLine($"The word '{searchWord}' does not appear in the sentence.");
+            }
+        }
+
+        
+
+        
+        static void GenerateRandomSentences()
+        {
+            Console.Write("Enter words separated by spaces: ");
+            string input = Console.ReadLine();
+            string[] words = input.Split(' ');
+
+            Console.Write("Enter a number of sentences to generate: ");
+            int N = int.Parse(Console.ReadLine());
+
+            Random random = new Random();
+
+            for (int i = 0; i < N; i++)
+            {
+                string sentence = GenerateSentence(words, random);
+                Console.WriteLine(sentence);
+            }
+        }
+
+        
+
+        
+
+        static void FindPalindromicWords()
+        {
+            Console.WriteLine("Enter a sentence:");
+            string sentence = Console.ReadLine();
+
+            string[] words = sentence.Split(' ');
+
+            Console.WriteLine("Palindromic words:");
+
+            foreach (string word in words)
+            {
+                if (IsPalindrome(word))
+                {
+                    Console.WriteLine(word);
+                }
+            }
+        }
+
+        static void CountVowelsAndConsonants()
+        {
+            Console.WriteLine("Enter a sentence:");
+            string sentence = Console.ReadLine();
+
+            string[] words = sentence.Split(' ');
+
+            for (int i = 0; i < words.Length; i++)
+            {
+                int vowelCount = CountVowels(words[i]);
+                int consonantCount = CountConsonants(words[i]);
+
+                Console.WriteLine($"Word: {words[i]}");
+                Console.WriteLine($"Vowels: {vowelCount}");
+                Console.WriteLine($"Consonants: {consonantCount}");
+                Console.WriteLine();
+            }
+        }
+        static string[] SplitSentenceIntoWords(string sentence)
+        {
+            // Count the number of words in the sentence
+            int wordCount = 0;
+            for (int i = 0; i < sentence.Length; i++)
+            {
+                if (sentence[i] == ' ' || sentence[i] == '.' || sentence[i] == ',' || sentence[i] == '?')
+                {
+                    wordCount++;
+                }
+            }
+
+            // Create an array of words
+            string[] words = new string[wordCount + 1];
+
+            // Split the sentence into words
+            int index = 0;
+            string word = "";
+            for (int i = 0; i < sentence.Length; i++)
+            {
+                if (sentence[i] != ' ' && sentence[i] != '.' && sentence[i] != ',' && sentence[i] != '?')
+                {
+                    word += sentence[i];
+                }
+                else if (!string.IsNullOrEmpty(word))
+                {
+                    words[index] = word;
+                    index++;
+                    word = "";
+                }
+            }
+
+            // Add the last word (if any)
+            if (!string.IsNullOrEmpty(word))
+            {
+                words[index] = word;
+            }
+
+            return words;
+        }
+        static bool CompareWords(string word1, string word2)
+        {
+            // Compare the words without considering the case
+            return word1.ToLower() == word2.ToLower();
+        }
+        static void CountWordFrequency(string sentence)
+        {
+            // Split the sentence into words
+            string[] words = sentence.Split(' ');
+
+            // Create variables to store the current word and its frequency
+            string currentWord;
+            int currentFrequency;
+
+            // Iterate over each word in the sentence
+            for (int i = 0; i < words.Length; i++)
+            {
+                currentWord = words[i];
+                currentFrequency = 1;
+
+                // Skip if the word is empty or has been processed before
+                if (string.IsNullOrEmpty(currentWord))
+                    continue;
+
+                // Count the frequency of the current word by comparing it with the remaining words
+                for (int j = i + 1; j < words.Length; j++)
+                {
+                    if (CompareWords(currentWord, words[j]))
+                    {
+                        currentFrequency++;
+                        words[j] = ""; // Mark the word as processed
+                    }
+                }
+
+                // Print the word and its frequency
+                Console.WriteLine($"{currentWord}: {currentFrequency}");
+            }
+        }
+
+        static string GenerateSentence(string[] words, Random random)
+        {
+            const int WordsPerSentence = 5;
+            string[] sentenceWords = new string[WordsPerSentence];
+
+            for (int i = 0; i < WordsPerSentence; i++)
+            {
+                int randomIndex = random.Next(0, words.Length);
+                sentenceWords[i] = words[randomIndex];
+            }
+
+            return string.Join(" ", sentenceWords);
+        }
+
+        static string GetShortestWord(string[] words)
+        {
+            string shortestWord = words[0];
+            foreach (string word in words)
+            {
+                if (word.Length < shortestWord.Length)
+                {
+                    shortestWord = word;
+                }
+            }
+            return shortestWord;
+        }
+
+        static string GetLongestWord(string[] words)
+        {
+            string longestWord = words[0];
+            foreach (string word in words)
+            {
+                if (word.Length > longestWord.Length)
+                {
+                    longestWord = word;
+                }
+            }
+            return longestWord;
+        }
+
+        static int CountOccurrences(string sentence, string searchWord)
+        {
+            int count = 0;
+            int sentenceLength = sentence.Length;
+            int wordLength = searchWord.Length;
+
+            for (int i = 0; i <= sentenceLength - wordLength; i++)
+            {
+                bool isMatch = true;
+                for (int j = 0; j < wordLength; j++)
+                {
+                    if (char.ToLower(sentence[i + j]) != char.ToLower(searchWord[j]))
+                    {
+                        isMatch = false;
+                        break;
+                    }
+                }
+
+                if (isMatch)
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+        static bool IsPalindrome(string word)
+        {
+            int left = 0;
+            int right = word.Length - 1;
+
+            while (left < right)
+            {
+                if (word[left] != word[right])
+                {
+                    return false;
+                }
+
+                left++;
+                right--;
+            }
+
+            return true;
+        }
+
+        static int CountVowels(string word)
+        {
+            int count = 0;
+            string vowels = "aeiou";
+
+            foreach (char c in word.ToLower())
+            {
+                if (vowels.Contains(c))
+                    count++;
+            }
+
+            return count;
+        }
+
+        static int CountConsonants(string word)
+        {
+            int count = 0;
+            string vowels = "aeiou";
+
+            foreach (char c in word.ToLower())
+            {
+                if (char.IsLetter(c) && !vowels.Contains(c))
+                    count++;
+            }
+
+            return count;
+        }
+    }
+
+}
