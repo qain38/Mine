@@ -1,0 +1,101 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Assignment_2_OOP
+{
+
+    public class BankAccount
+    {
+        public double AccountNumber; 
+        public string AccountHolderName;
+        public double Balance;
+
+        public BankAccount(double account, string name, double balance)
+        {
+            AccountNumber = account;
+            AccountHolderName = name;
+            Balance = balance;
+        }
+
+        public virtual void Deposit(double deposit)
+        {
+            Balance = Balance + deposit;
+            Console.WriteLine($"Balance after depositing {deposit} is: {Balance}.");
+        }
+        public virtual void Withdraw(double withdraw)
+        {
+            Balance = Balance - withdraw;
+            Console.WriteLine($"Balance after withdrwaing ({withdraw}) is: {Balance}.");
+        }
+
+        public void DisplayAccountInfo()
+        {
+            Console.WriteLine("The details of the account are: ");
+            Console.WriteLine("1.User Name:" + AccountHolderName);
+            Console.WriteLine("2.Account Number:" + AccountNumber);
+            Console.WriteLine("3.Balance:" + Balance);
+
+        }
+
+    }
+
+    public class SavingsAccount : BankAccount
+    {
+        public double InterestRate;
+        public SavingsAccount(double account, string name, double balance, double InterestRate) : base(account, name, balance)
+        {
+        }
+        public override void Deposit(double deposit)
+        {
+            Balance += deposit;
+            Balance += InterestRate * Balance;
+            Console.WriteLine($"Balance after depositing ({deposit}) with interest rate of ({InterestRate}) is: {Balance}.");
+        }
+
+    }
+
+    public class CheckAccount : BankAccount
+    {
+        public CheckAccount(double account, string name, double balance) : base(account, name, balance)
+        {
+        }
+        public override void Withdraw(double withdraw)
+        {
+            if (withdraw > Balance)
+            {
+                Console.WriteLine("Withdraw amount exceeds Current balance. Enter the valid amount.");
+                withdraw = int.Parse(Console.ReadLine());
+            }
+            else
+            {
+                Balance = Balance - withdraw;
+                Console.WriteLine($"Balance after withdrwaing ({withdraw}) is: {Balance}.");
+            }
+        }
+    }
+
+    class Bank
+    {
+        public List<BankAccount> BankAccounts { get; set; }
+        public Bank()
+        {
+            BankAccounts = new List<BankAccount>();
+        }
+        public void AddAccount(BankAccount New)
+        {
+            BankAccounts.Add(New);
+            Console.WriteLine("The new account Number{0} named to {1} has been added to the index of existing accounts", New.Account, New.Name);
+        }
+
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+
+        }
+    }
+}
