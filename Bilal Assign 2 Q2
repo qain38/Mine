@@ -1,0 +1,90 @@
+using System;
+using System.Collections.Generic;
+public class BankAccount
+{
+    public string Name;
+    public double Account;
+    public decimal Balance;
+
+    public BankAccount(double account, string name, decimal balance)
+    {
+        Account = account;
+        Name = name;
+        Balance = balance;
+    }
+
+    public virtual void Deposit(decimal deposit)
+    {
+        Balance = Balance + deposit;
+        Console.WriteLine("The remaining balance after withdrawl of {0} money is:{1}", deposit, Balance);
+    }
+    public virtual void Withdraw(decimal withdrawen)
+    {
+        Balance = Balance - withdrawen;
+        Console.WriteLine("The remaining balance after deposit of {0} money is:{1}", withdrawen, Balance);
+    }
+    public void DisplayAccountInfo()
+    {
+        Console.WriteLine("The details of the account are as follow");
+        Console.WriteLine("1.User Name:" + Name);
+        Console.WriteLine("2.Account Number:" + Account);
+        Console.WriteLine("3.Balance:" + Balance);
+
+    }
+
+}
+public class SavingsAccount : BankAccount
+{
+    public decimal InterestRate;
+    public SavingsAccount(double account, string name, decimal balance, decimal InterestRate) : base(account, name, balance)
+    {
+    }
+    public override void Deposit(decimal deposit)
+    {
+        Balance += deposit;
+        decimal interest = Convert.ToDecimal(1.008);
+        Balance += interest * Balance;
+        Console.WriteLine("The remaining balance after deposit of {0} money is:{1}", withdrawen, Balance);
+    }
+
+}
+public class CheckAccount : BankAccount
+{
+    public CheckAccount(double account, string name, decimal balance) : base(account, name, balance)
+    {
+    }
+    public override void Withdraw(decimal withdrawen)
+    {
+        if (withdrawen > Balance)
+        {
+            Console.WriteLine("Not possible Amount exceeds ur current account balance.Enter a valid amount");
+            withdrawen = Convert.ToInt32(Console.ReadLine());
+        }
+        else
+        {
+            Balance = Balance - withdrawen;
+            Console.WriteLine("The remaining balance after deposit of {0} money is:{1}", withdrawen, Balance);
+        }
+    }
+}
+class Bank
+{
+    public List<BankAccount> BankAccounts { get; set; }
+    public Bank()
+    {
+        BankAccounts = new List<BankAccount>();
+    }
+    public void AddAccount(BankAccount New)
+    {
+        BankAccounts.Add(New);
+        Console.WriteLine("The new account Number{0} named to {1} has been added to the index of existing accounts", New.Account, New.Name);
+    }
+
+}
+class Program
+{
+    static void Main(string[] args)
+    {
+
+    }
+}
