@@ -1,0 +1,252 @@
+using System;
+using System.Collections.Generic;
+
+interface ITransaction
+{
+    void ExecuteTransaction(double amount);
+    void PrintTransaction();
+}
+
+abstract class BankAccount
+{
+    public string AccountNumber { get; set; }
+    protected string AccountHolderName { get; set; }
+    protected double Balance { get; set; }
+    protected List<Transaction> TransactionHistory { get; set; }
+
+    public BankAccount(string accountNumber, string accountHolderName, double balance)
+    {
+        AccountNumber = accountNumber;
+        AccountHolderName = accountHolderName;
+        Balance = balance;
+        TransactionHistory = new List<Transaction>();
+    }
+
+    public abstract void CalculateInterest();
+    public abstract void DisplayAccountInfo();
+
+    public void Deposit(double depositAmount)
+    {
+        Balance += depositAmount;
+        TransactionHistory.Add(new Transaction("Deposit", depositAmount));
+    }
+
+    public virtual void Withdraw(double withdrawAmount)
+    {
+        if (Balance >= withdrawAmount)
+        {
+            Balance -= withdrawAmount;
+            TransactionHistory.Add(new Transaction("Withdrawal", -withdrawAmount));
+        }
+        else
+        {
+            Console.WriteLine("Insufficient balance.");
+        }
+    }
+
+    public void PrintTransactionHistory()
+    {
+        Console.WriteLine("--- Transaction History ---");
+        foreach (Transaction transaction in TransactionHistory)
+        {
+            Console.WriteLine(transaction);
+        }
+        Console.WriteLine();
+    }
+}
+
+class SavingsAccount : BankAccount, ITransaction
+{
+    protected double InterestRate { get; set; }
+
+    public SavingsAccount(string accountNumber, string accountHolderName, double balance, double interestRate)
+        : base(accountNumber, accountHolderName, balance)
+    {
+        InterestRate = interestRate;
+    }
+
+    public void ExecuteTransaction(double amount)
+    {
+        if (amount > 0)
+        {
+            Deposit(amount);
+        }
+        else
+        {
+            Withdraw(-amount);
+        }
+    }
+
+    public void PrintTransaction()
+    {
+        PrintTransactionHistory();
+
+    }
+
+    public override void CalculateInterest()
+    {
+        double interestAmount = Balance * InterestRate;
+        Deposit(interestAmount);
+    }
+
+    public override void DisplayAccountInfo()
+    {
+        Console.WriteLine("--- Savings Account Info ---");
+        Console.WriteLine("Account Number: " + AccountNumber);
+        Console.WriteLine("Account Holder Name: " + AccountHolderName);
+        Console.WriteLine("Balance: " + Balance);
+        Console.WriteLine("Interest Rate: " + InterestRate);
+        Console.WriteLine();
+    }
+}
+
+class CheckingAccount : BankAccount, ITransaction
+{
+    public CheckingAccount(string accountNumber, string accountHolderName, double balance)
+        : base(accountNumber, accountHolderName, balance)
+    {
+    }
+
+    public void ExecuteTransaction(double amount)
+    {
+        if (amount > 0)
+        {
+            Deposit(amount);
+        }
+        else
+        {
+            Withdraw(-amount);
+        }
+    }
+
+    public void PrintTransaction()
+    {
+        PrintTransactionHistory();
+    }
+
+    public override void CalculateInterest()
+    {
+        // No interest calculation for checking account
+    }
+
+    public override void DisplayAccountInfo()
+    {
+        Console.WriteLine("--- Checking Account Info ---");
+        Console.WriteLine("Account Number: " + AccountNumber);
+        Console.WriteLine("Account Holder Name: " + AccountHolderName);
+        Console.WriteLine("Balance: " + Balance);
+        Console.WriteLine();
+    }
+}
+
+class LoanAccount : BankAccount, ITransaction
+{
+    protected double InterestRate { get; set; }
+
+    public LoanAccount(string accountNumber, string accountHolderName, double balance, double interestRate)
+        : base(accountNumber, accountHolderName, balance)
+    {
+        InterestRate = interestRate;
+    }
+
+    public void ExecuteTransaction(double amount)
+    {
+        if (amount > 0)
+        {
+            Deposit(amount);
+        }
+        else
+        {
+            Withdraw(-amount);
+        }
+    }
+
+    public void PrintTransaction()
+    {
+        PrintTransactionHistory();
+    }
+
+    public override void CalculateInterest()
+    {
+        double interestAmount = Balance * InterestRate;
+        Deposit(interestAmount);
+    }
+
+    public override void DisplayAccountInfo()
+    {
+        Console.WriteLine("--- Loan Account Info ---");
+        Console.WriteLine("Account Number: " + AccountNumber);
+        Console.WriteLine("Account Holder Name: " + AccountHolderName);
+        Console.WriteLine("Balance: " + Balance);
+        Console.WriteLine("Interest Rate: " + InterestRate);
+        Console.WriteLine();
+    }
+}
+
+class Transaction
+{
+    public string TransactionType { get; set; }
+    public double TransactionAmount { get; set; }
+    public DateTime TransactionDate { get; set; }
+
+    public Transaction(string transactionType, double transactionAmount)
+    {
+        TransactionType = transactionType;
+        TransactionAmount = transactionAmount;
+        TransactionDate = DateTime.Now;
+    }
+
+    public override string ToString()
+    {
+        return $"Type: {TransactionType}, Amount: {TransactionAmount}, Date: {TransactionDate}";
+    }
+}
+
+class Bank
+{
+    public Dictionary<string, BankAccount> Accounts { get; set; }
+
+    public Bank()
+    {
+        Accounts = new Dictionary<string, BankAccount>();
+    }
+
+    public void AddAccount(BankAccount account)
+    {
+        Accounts.Add(account.AccountNumber, account);
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Bank bank = new Bank();
+
+        SavingsAccount savingsAccount = new SavingsAccount("123456789", "John Smith", 1000, 0.05);
+        CheckingAccount checkingAccount = new CheckingAccount("987654321", "Jane Doe", 500);
+        LoanAccount loanAccount = new LoanAccount("543216789", "Alice Johnson", 10000, 0.08);
+
+        bank.AddAccount(savingsAccount);
+        bank.AddAccount(checkingAccount);
+        bank.AddAccount(loanAccount);
+
+        savingsAccount.ExecuteTransaction(500);
+        savingsAccount.CalculateInterest();
+
+        checkingAccount.ExecuteTransaction(-200);
+
+        loanAccount.CalculateInterest();
+
+        savingsAccount.DisplayAccountInfo();
+        savingsAccount.PrintTransaction();
+
+        checkingAccount.DisplayAccountInfo();
+        checkingAccount.PrintTransaction();
+
+        loanAccount.DisplayAccountInfo();
+        loanAccount.PrintTransaction();
+
+        Console.ReadKey();
+    }
+}
